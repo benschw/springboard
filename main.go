@@ -1,8 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"flag"
+	"os"
+
+	"github.com/google/subcommands"
+)
+
 
 func main() {
-    fmt.Printf("hello, world\n")
-}
+	subcommands.Register(subcommands.HelpCommand(), "")
+	subcommands.Register(subcommands.FlagsCommand(), "")
+	subcommands.Register(subcommands.CommandsCommand(), "")
+	subcommands.Register(&setCmd{}, "")
 
+	flag.Parse()
+	ctx := context.Background()
+	os.Exit(int(subcommands.Execute(ctx)))
+}
