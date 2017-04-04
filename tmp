@@ -1,0 +1,40 @@
+	cfg := vaultapi.DefaultConfig()
+	cfg.Address = p.vault
+	client, err := vaultapi.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+	client.SetToken("horde")
+	c := client.Logical()
+
+	_, err = c.Write(p.path,
+	    map[string]interface{}{
+			p.key:  p.value,
+			"a": "b",
+			"c": "d",
+	})
+	if err != nil {
+		panic(err)
+	}
+
+
+
+
+
+	cfg := vaultapi.DefaultConfig()
+	cfg.Address = p.vault
+	client, err := vaultapi.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+	client.SetToken("horde")
+	c := client.Logical()
+
+	v, err := c.Read(p.path)
+	if err != nil {
+		panic(err)
+	}
+
+	for k, v := range v.Data {
+		fmt.Printf("%s: %s\n", k, v)
+	}
