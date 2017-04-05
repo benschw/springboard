@@ -19,10 +19,8 @@ type getCmd struct {
 }
 
 func (*getCmd) Name() string     { return "get" }
-func (*getCmd) Synopsis() string { return "Dencrypt a value from a secrets file" }
-func (*getCmd) Usage() string {
-	return "get -s <./secrets.yml> -t <my-key> <key/name of secret>:\n"
-}
+func (*getCmd) Synopsis() string { return "Decrypt a value from a secrets file" }
+func (*getCmd) Usage() string    { return "get -s <./secrets.yml> -t <my-key> <key/name of secret>:\n" }
 
 func (p *getCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&p.secrets, "s", "", "path to secrets file")
@@ -31,15 +29,7 @@ func (p *getCmd) SetFlags(f *flag.FlagSet) {
 
 func (p *getCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	a := f.Args()
-	if len(a) < 1 {
-		fmt.Println(p.Usage())
-		return subcommands.ExitUsageError
-	}
-	if p.secrets == "" {
-		fmt.Println(p.Usage())
-		return subcommands.ExitUsageError
-	}
-	if p.transitKey == "" {
+	if len(a) < 1 || p.secrets == "" || p.transitKey == "" {
 		fmt.Println(p.Usage())
 		return subcommands.ExitUsageError
 	}
@@ -49,12 +39,14 @@ func (p *getCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) s
 
 	s, err := secrets.New(p.secrets, c)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return subcommands.ExitFailure
 	}
 	
 	val, err := s.Get(key)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return subcommands.ExitFailure
 	}
 
 	fmt.Println(val)

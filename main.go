@@ -11,14 +11,12 @@ import (
 
 func main() {
 
-
 	cfg := vaultapi.DefaultConfig()
 	client, err := vaultapi.NewClient(cfg)
 	if err != nil {
 		panic(err)
 	}
 	c := client.Logical()
-
 
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(&setCmd{vault: c}, "")

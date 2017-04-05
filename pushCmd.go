@@ -20,10 +20,8 @@ type pushCmd struct {
 }
 
 func (*pushCmd) Name() string     { return "push" }
-func (*pushCmd) Synopsis() string { return "Dencrypt a value from a secrets file" }
-func (*pushCmd) Usage() string {
-	return "get -s <./secrets.yml> -p <secret/my-space>:\n"
-}
+func (*pushCmd) Synopsis() string { return "publish values from a secrets file to vault" }
+func (*pushCmd) Usage() string    { return "push -s <./secrets.yml> <secret/path/to/my-key>:\n" }
 
 func (p *pushCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&p.secrets, "s", "", "path to secrets file")
@@ -32,31 +30,25 @@ func (p *pushCmd) SetFlags(f *flag.FlagSet) {
 
 func (p *pushCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	a := f.Args()
-	if len(a) != 1 {
+	if len(a) != 1 || p.secrets == "" || p.transitKey == "" {
 		fmt.Println(p.Usage())
 		return subcommands.ExitUsageError
 	}
 	path := a[0]
-	if p.secrets == "" {
-		fmt.Println(p.Usage())
-		return subcommands.ExitUsageError
-	}
-	if p.transitKey == "" {
-		fmt.Println(p.Usage())
-		return subcommands.ExitUsageError
-	}
 
 	c := crypt.New(p.vault, p.transitKey)
 
 	s, err := secrets.New(p.secrets, c)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return subcommands.ExitFailure
 	}
 
 	pub := publisher.New(p.vault, path)
 
 	if err = pub.Push(s); err != nil {
-		panic(err)
+		fmt.Println(err)
+		return subcommands.ExitFailure
 	}
 
 
