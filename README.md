@@ -33,6 +33,7 @@ the secrets stored in this file into a specified path of the
 	./springboard set -s ./test.yml -t my-key foo "hello world"
 	./springboard set -s ./test.yml -t my-key bar "hello galaxy"
 	./springboard get -s ./test.yml -t my-key foo
+	hello world
 	./springboard push -s ./test.yml -t my-key secret/my-secrets
 
 	docker run -it --rm --link vault:vault -e VAULT_TOKEN=springboard vault:0.6.5  \
