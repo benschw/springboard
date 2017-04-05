@@ -46,7 +46,10 @@ func (s *Secrets) Keys() []string {
 func (s *Secrets) Set(key string, value string) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
-			val, _ := s.crypt.Encrypt(value)
+			val, err := s.crypt.Encrypt(value)
+			if err != nil {
+				panic(err)
+			}
 			s.data[i].Value = val
 			return
 		}
