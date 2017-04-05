@@ -9,14 +9,16 @@
 	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 vault read cubbyhole/foo
 
 
+# example stuff...
 
 	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 vault mount transit
 
 	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 vault write -f transit/keys/cub
 
 
-	echo hello | base64
-	aGVsbG8K
+	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 ./vault-cub set -path asd -key asd -value hellooo
+	vault:v1:m0amrAD4HUPQ1qQqg+YqiMiSlZb3Jt2Kx1YJ6OhFgJT0obk=
 
-
+	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 ./vault-cub get -path asd -value vault:v1:uOF/dZRqijfaDBdcYmVIjmZ5EciQ2VskD8VhAjgrJ18ZJMQ=
+	hellooo
 
