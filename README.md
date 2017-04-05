@@ -14,12 +14,15 @@ the secrets stored in this file into a specified path of the
 
 
 	docker run -d --name vault -p 8200:8200 --cap-add=IPC_LOCK -e VAULT_DEV_ROOT_TOKEN_ID=springboard vault:0.6.5
+	811161a99105845987527c3cfff67c19b969b768a932bf77e9c97d90be338536
 
 	docker run -it --rm --link vault:vault -e VAULT_TOKEN=springboard vault:0.6.5  \
 		/bin/sh -c 'VAULT_ADDR=http://$VAULT_PORT_8200_TCP_ADDR:8200 vault mount transit'
+	Successfully mounted 'transit' at 'transit'!
 
 	docker run -it --rm --link vault:vault -e VAULT_TOKEN=springboard vault:0.6.5  \
 		/bin/sh -c 'VAULT_ADDR=http://$VAULT_PORT_8200_TCP_ADDR:8200 vault write -f transit/keys/my-key'
+	Success! Data written to: transit/keys/my-key
 
 
 ## use the app
