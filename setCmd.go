@@ -5,8 +5,8 @@ import (
 	"flag"
 	"fmt"
 	
-	"github.com/benschw/vault-cub/secrets"
-	"github.com/benschw/vault-cub/crypt"
+	"github.com/benschw/springboard/secrets"
+	"github.com/benschw/springboard/crypt"
 
 
 	"github.com/google/subcommands"

@@ -1,7 +1,7 @@
 package publisher
 
 import (
-	"github.com/benschw/vault-cub/secrets"
+	"github.com/benschw/springboard/secrets"
 	vaultapi "github.com/hashicorp/vault/api"
 )
 

@@ -46,7 +46,8 @@ func (s *Secrets) Keys() []string {
 func (s *Secrets) Set(key string, value string) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
-			s.data[i].Value = value
+			val, _ := s.crypt.Encrypt(value)
+			s.data[i].Value = val
 			return
 		}
 	}
@@ -55,7 +56,7 @@ func (s *Secrets) Set(key string, value string) {
 func (s *Secrets) Get(key string) (string, error) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
-			return s.data[i].Value, nil
+			return s.crypt.Decrypt(s.data[i].Value)
 		}
 	}
 	return "", errors.New("key not found")

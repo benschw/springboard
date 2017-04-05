@@ -5,9 +5,9 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/benschw/vault-cub/publisher"
-	"github.com/benschw/vault-cub/crypt"
-	"github.com/benschw/vault-cub/secrets"
+	"github.com/benschw/springboard/publisher"
+	"github.com/benschw/springboard/crypt"
+	"github.com/benschw/springboard/secrets"
 
 	"github.com/google/subcommands"
 	vaultapi "github.com/hashicorp/vault/api"
