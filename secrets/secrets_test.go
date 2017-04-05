@@ -18,9 +18,9 @@ func TestSecretAccess(t *testing.T) {
 		t.Error("problem loading config: ", err)
 	}
 	
-	s.setValue("foo", "bar")
+	s.Set("foo", "bar")
 	
-	val, err := s.getValue("foo")
+	val, err := s.Get("foo")
 	if err != nil {
 		t.Error("problem retreiving key: ", err)
 	}
@@ -37,16 +37,16 @@ func TestSecretStorage(t *testing.T) {
 
 	s, _ := New(file.Name())
 
-	s.setValue("foo", "bar")
+	s.Set("foo", "bar")
 
-	if err := s.save(); err != nil {
+	if err := s.Save(); err != nil {
 		t.Error("problem saving", err)
 	}
 
 	s2, _ := New(file.Name())
 
 
-	val, _ := s2.getValue("foo")
+	val, _ := s2.Get("foo")
 
 	if val != "bar" {
 		t.Error("should equal bar", val)
@@ -65,7 +65,7 @@ func TestNoKey(t *testing.T) {
 
 	s, _ := New(file.Name())
 
-	_, err := s.getValue("foo")
+	_, err := s.Get("foo")
 	if err == nil {
 		t.Error("key doesn't exist, should have errored")
 	}

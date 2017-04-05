@@ -11,14 +11,13 @@
 
 # example stuff...
 
-	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 vault mount transit
+	export VAULT_TOKEN=horde
+	export VAULT_ADDR=http://$HORDE_IP:8200 
 
-	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 vault write -f transit/keys/cub
+	vault mount transit
+	vault write -f transit/keys/cub
 
+	touch test.yml
 
-	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 ./vault-cub set -path asd -key asd -value hellooo
-	vault:v1:m0amrAD4HUPQ1qQqg+YqiMiSlZb3Jt2Kx1YJ6OhFgJT0obk=
-
-	VAULT_TOKEN=horde VAULT_ADDR=http://$HORDE_IP:8200 ./vault-cub get -path asd -value vault:v1:uOF/dZRqijfaDBdcYmVIjmZ5EciQ2VskD8VhAjgrJ18ZJMQ=
-	hellooo
-
+	./vault-cub set -secrets ./test.yml -transit-key cub foo "hello world"
+	./vault-cub get -secrets ./test.yml -transit-key cub foo

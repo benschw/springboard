@@ -11,17 +11,14 @@ import (
 
 func main() {
 
-	vault := os.Getenv("VAULT_ADDR")
-	token := os.Getenv("VAULT_TOKEN")
 
 	cfg := vaultapi.DefaultConfig()
-	cfg.Address = vault
 	client, err := vaultapi.NewClient(cfg)
 	if err != nil {
 		panic(err)
 	}
-	client.SetToken(token)
 	c := client.Logical()
+
 
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(subcommands.FlagsCommand(), "")

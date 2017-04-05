@@ -4,8 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	
+	"github.com/benschw/vault-cub/secrets"
+	"github.com/benschw/vault-cub/crypt"
 
-	b64 "encoding/base64"
 
 	"github.com/google/subcommands"
 	vaultapi "github.com/hashicorp/vault/api"
@@ -14,39 +16,46 @@ import (
 type setCmd struct {
 	vault   *vaultapi.Logical
 	secrets string
-	path    string
-	key     string
-	value   string
+	transitKey    string
 }
 
 func (*setCmd) Name() string     { return "set" }
 func (*setCmd) Synopsis() string { return "Encrypt a value and set it to the specified key" }
 func (*setCmd) Usage() string {
-	return `print [-capitalize] <some text>:
-  Print args to stdout.
-`
+	return "set -secrets <path to secrets.yml> -transit-key <transit key name> <key/name of secret> <secret to store>:"
 }
 
 func (p *setCmd) SetFlags(f *flag.FlagSet) {
-	//	f.StringVar(&p.secrets, "secrets", "", "path to secrets file")
-	f.StringVar(&p.path, "path", "", "vault path")
-	f.StringVar(&p.key, "key", "", "secret key")
-	f.StringVar(&p.value, "value", "", "plain text secret")
-
+	f.StringVar(&p.secrets, "secrets", "", "path to secrets file")
+	f.StringVar(&p.transitKey, "transit-key", "", "vault transit key")
 }
 
 func (p *setCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	enc := b64.StdEncoding.EncodeToString([]byte(p.value))
+	a := f.Args()
+	key, valSlice := a[0], a[1:]
 
-	v, err := p.vault.Write("transit/encrypt/cub",
-		map[string]interface{}{
-			"plaintext": enc,
-		})
+	value := ""
+	for _, arg := range valSlice {
+		value = fmt.Sprintf("%s%s", value, arg)
+	}
+
+
+	s, err := secrets.New(p.secrets)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("%s\n", v.Data["ciphertext"])
+	c := crypt.New(p.vault, p.transitKey)
+
+	val, err := c.Encrypt(value)
+	if err != nil {
+		panic(err)
+	}
+
+	s.Set(key, val)
+	if err = s.Save(); err != nil {
+		panic(err)
+	}
 
 	return subcommands.ExitSuccess
 }

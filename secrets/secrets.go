@@ -6,12 +6,6 @@ import (
 	"io/ioutil"
 	"errors"
 )
-type SecretStore interface {
-	getValue(string) (string, error)
-	setValue(string, string)
-	save() error
-}
-
 
 func New(path string) (*Secrets, error) {
 	if _, err := os.Stat(path); err != nil {
@@ -39,7 +33,7 @@ type Secrets struct {
 
 
 
-func (s *Secrets) setValue(key string, value string) {
+func (s *Secrets) Set(key string, value string) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
 			s.data[i].Value = value
@@ -48,7 +42,7 @@ func (s *Secrets) setValue(key string, value string) {
 	}
 	s.data = append(s.data, SecretsEntry{Key: key, Value: value})
 }
-func (s *Secrets) getValue(key string) (string, error) {
+func (s *Secrets) Get(key string) (string, error) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
 			return s.data[i].Value, nil
@@ -56,7 +50,7 @@ func (s *Secrets) getValue(key string) (string, error) {
 	}
 	return "", errors.New("key not found")
 }
-func (s *Secrets) save() error {
+func (s *Secrets) Save() error {
 	b, err := yaml.Marshal(s.data)
 	if err != nil {
 		return err
