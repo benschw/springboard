@@ -5,36 +5,38 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/benschw/vault-cub/secrets"
+	"github.com/benschw/vault-cub/publisher"
 	"github.com/benschw/vault-cub/crypt"
+	"github.com/benschw/vault-cub/secrets"
 
 	"github.com/google/subcommands"
 	vaultapi "github.com/hashicorp/vault/api"
 )
 
-type getCmd struct {
+type pushCmd struct {
 	vault   *vaultapi.Logical
 	secrets string
 	transitKey string
 }
 
-func (*getCmd) Name() string     { return "get" }
-func (*getCmd) Synopsis() string { return "Dencrypt a value from a secrets file" }
-func (*getCmd) Usage() string {
-	return "get -s <./secrets.yml> -t <my-key> <key/name of secret>:\n"
+func (*pushCmd) Name() string     { return "push" }
+func (*pushCmd) Synopsis() string { return "Dencrypt a value from a secrets file" }
+func (*pushCmd) Usage() string {
+	return "get -s <./secrets.yml> -p <secret/my-space>:\n"
 }
 
-func (p *getCmd) SetFlags(f *flag.FlagSet) {
+func (p *pushCmd) SetFlags(f *flag.FlagSet) {
 	f.StringVar(&p.secrets, "s", "", "path to secrets file")
 	f.StringVar(&p.transitKey, "t", "", "vault transit key")
 }
 
-func (p *getCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (p *pushCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	a := f.Args()
-	if len(a) < 1 {
+	if len(a) != 1 {
 		fmt.Println(p.Usage())
 		return subcommands.ExitUsageError
 	}
+	path := a[0]
 	if p.secrets == "" {
 		fmt.Println(p.Usage())
 		return subcommands.ExitUsageError
@@ -43,7 +45,6 @@ func (p *getCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) s
 		fmt.Println(p.Usage())
 		return subcommands.ExitUsageError
 	}
-	key := a[0]
 
 	c := crypt.New(p.vault, p.transitKey)
 
@@ -51,13 +52,13 @@ func (p *getCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) s
 	if err != nil {
 		panic(err)
 	}
-	
-	val, err := s.Get(key)
-	if err != nil {
+
+	pub := publisher.New(p.vault, path)
+
+	if err = pub.Push(s); err != nil {
 		panic(err)
 	}
 
-	fmt.Println(val)
 
 	return subcommands.ExitSuccess
 }

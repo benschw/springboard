@@ -15,7 +15,7 @@ type Crypt struct {
 	key string
 }
 
-func (c *Crypt) Encrypt(val string) (string, error) {
+func (c Crypt) Encrypt(val string) (string, error) {
 	enc := b64.StdEncoding.EncodeToString([]byte(val))
 
 	v, err := c.vault.Write(fmt.Sprintf("transit/encrypt/%s", c.key),
@@ -28,7 +28,7 @@ func (c *Crypt) Encrypt(val string) (string, error) {
 	return fmt.Sprintf("%s", v.Data["ciphertext"]), nil
 }
 
-func (c *Crypt) Decrypt(val string) (string, error) {
+func (c Crypt) Decrypt(val string) (string, error) {
 	v, err := c.vault.Write(fmt.Sprintf("transit/decrypt/%s", c.key),
 		map[string]interface{}{
 			"ciphertext": val,

@@ -6,13 +6,20 @@ import (
 	"io/ioutil"
 	"os"
 )
+type stubCrypt struct {}
+func (s stubCrypt) Encrypt(val string) (string, error) {
+	return val, nil
+}
+func (s stubCrypt) Decrypt(val string) (string, error) {
+	return val, nil
+}
 
 
 func TestSecretAccess(t *testing.T) {
 	file, _ := ioutil.TempFile(os.TempDir(), "vault")
 	defer os.Remove(file.Name())
 
-	s, err := New(file.Name())
+	s, err := New(file.Name(), stubCrypt{})
 
 	if err != nil {
 		t.Error("problem loading config: ", err)
@@ -35,7 +42,7 @@ func TestSecretStorage(t *testing.T) {
 	file, _ := ioutil.TempFile(os.TempDir(), "vault")
 	defer os.Remove(file.Name())
 
-	s, _ := New(file.Name())
+	s, _ := New(file.Name(), &stubCrypt{})
 
 	s.Set("foo", "bar")
 
@@ -43,7 +50,7 @@ func TestSecretStorage(t *testing.T) {
 		t.Error("problem saving", err)
 	}
 
-	s2, _ := New(file.Name())
+	s2, _ := New(file.Name(), &stubCrypt{})
 
 
 	val, _ := s2.Get("foo")
@@ -52,18 +59,49 @@ func TestSecretStorage(t *testing.T) {
 		t.Error("should equal bar", val)
 	}
 }
-func TestNoFile(t *testing.T) {
-	_, err := New("./dne")
-	
-	if err == nil {
-		t.Error("config doesn't exist, should have errored")
+func TestKeys(t *testing.T) {
+	file, _ := ioutil.TempFile(os.TempDir(), "vault")
+	defer os.Remove(file.Name())
+
+	s, _ := New(file.Name(), &stubCrypt{})
+
+	s.Set("foo", "bar")
+	s.Set("baz", "boo")
+
+
+	val := s.Keys()
+
+	if val[0] != "foo" && val[1] != "foo" {
+		t.Error("should have foo key", val)
+	}
+	if val[0] != "baz" && val[1] != "baz" {
+		t.Error("should have baz key", val)
 	}
 }
+func TestNoFile(t *testing.T) {
+	s, err := New("./dne", &stubCrypt{})
+	if err != nil {
+		t.Error("config doesn't exist, should have created it", err)
+	}
+	defer os.Remove("./dne")
+	
+	s.Set("foo", "bar")
+	s.Save()
+
+	s2, _ := New("./dne", &stubCrypt{})
+
+	val, _ := s2.Get("foo")
+
+	if val != "bar" {
+		t.Error("should equal bar", val)
+	}
+}
+
 func TestNoKey(t *testing.T) {
 	file, _ := ioutil.TempFile(os.TempDir(), "vault")
 	defer os.Remove(file.Name())
 
-	s, _ := New(file.Name())
+	s, _ := New(file.Name(), &stubCrypt{})
 
 	_, err := s.Get("foo")
 	if err == nil {

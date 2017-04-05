@@ -19,5 +19,5 @@
 
 	touch test.yml
 
-	./vault-cub set -secrets ./test.yml -transit-key cub foo "hello world"
-	./vault-cub get -secrets ./test.yml -transit-key cub foo
+	./vault-cub set -s ./test.yml -t cub foo "hello world"
+	./vault-cub get -s ./test.yml -t cub foo

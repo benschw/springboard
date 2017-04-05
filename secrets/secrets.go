@@ -7,9 +7,14 @@ import (
 	"errors"
 )
 
-func New(path string) (*Secrets, error) {
+type crypt interface {
+	Encrypt(string) (string, error)
+	Decrypt(string) (string, error)
+}
+
+func New(path string, crypt crypt) (*Secrets, error) {
 	if _, err := os.Stat(path); err != nil {
-		return nil, errors.New("config path not valid")
+		ioutil.WriteFile(path, []byte{}, 0644)
 	}
 
 	ymlData, err := ioutil.ReadFile(path)
@@ -23,16 +28,21 @@ func New(path string) (*Secrets, error) {
 		return nil, err
 	}
 
-	return &Secrets{path: path, data: data}, nil
+	return &Secrets{path: path, crypt: crypt, data: data}, nil
 }
 
 type Secrets struct {
 	path string
+	crypt crypt
 	data []SecretsEntry
 }
-
-
-
+func (s *Secrets) Keys() []string {
+	keys := make([]string, len(s.data))
+	for i := 0; i < len(s.data); i++ {
+		keys[i] = s.data[i].Key
+	}
+	return keys
+}
 func (s *Secrets) Set(key string, value string) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
