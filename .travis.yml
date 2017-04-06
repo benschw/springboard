@@ -10,7 +10,7 @@ env:
 before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/mitchellh/gox
-  - wget http://dl.fligl.io/vault
+  - wget http://dl.fligl.io/vault -O ./vault
   - chmod 755 vault
   - ./vault server -dev -dev-root-token-id=springboard &
   - sleep 3
