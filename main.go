@@ -1,29 +1,82 @@
 package main
 
 import (
-	"context"
 	"flag"
+	"fmt"
 	"os"
-
-	"github.com/google/subcommands"
-	vaultapi "github.com/hashicorp/vault/api"
 )
 
+func usage() {
+	fmt.Printf("Usage: springboard <subcommand> -s <secrets file> -t <transit key> [values]\n\n")
+
+	fmt.Printf("Flags:\n")
+	fmt.Printf("    -s string\n")
+	fmt.Printf("        secrets file\n")
+	fmt.Printf("    -t string\n")
+	fmt.Printf("        transit key\n\n")
+
+	fmt.Printf("Examples:\n")
+	fmt.Printf("    springboard set -s secrets.yml -t my-key user_name supersecret\n")
+	fmt.Printf("    springboard get -s secrets.yml -t my-key user_name\n")
+	fmt.Printf("    springboard push -s secrets.yml -t my-key secret/my-space\n\n")
+
+	fmt.Printf("github.com/benschw/springboard\n")
+}
+
 func main() {
+	// flags
 
-	cfg := vaultapi.DefaultConfig()
-	client, err := vaultapi.NewClient(cfg)
-	if err != nil {
-		panic(err)
+	f := flag.NewFlagSet("", flag.ExitOnError)
+	f.Usage = usage
+
+	secretsFile := f.String("s", "", "secrets file path")
+	transitKey := f.String("t", "", "transit key")
+
+	if len(os.Args) < 2 {
+		f.Usage()
+		os.Exit(2)
 	}
-	c := client.Logical()
 
-	subcommands.Register(subcommands.HelpCommand(), "")
-	subcommands.Register(&setCmd{vault: c}, "")
-	subcommands.Register(&getCmd{vault: c}, "")
-	subcommands.Register(&pushCmd{vault: c}, "")
+	f.Parse(os.Args[2:])
 
-	flag.Parse()
-	ctx := context.Background()
-	os.Exit(int(subcommands.Execute(ctx)))
+	if *secretsFile == "" {
+		f.Usage()
+		os.Exit(2)
+	}
+	if *transitKey == "" {
+		f.Usage()
+		os.Exit(2)
+	}
+
+	// App
+	app, err := NewApp(*secretsFile, *transitKey)
+	if err != nil {
+		f.Usage()
+		os.Exit(1)
+	}
+
+	// subcommands
+	switch os.Args[1] {
+	case "get":
+		if err := app.get(f.Args()); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	case "set":
+		if err := app.set(f.Args()); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	case "push":
+		if err := app.push(f.Args()); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	default:
+		fmt.Printf("%q is not valid command.\n", os.Args[1])
+		f.Usage()
+		os.Exit(2)
+	}
+
+	os.Exit(0)
 }
