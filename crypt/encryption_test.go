@@ -16,7 +16,7 @@ func TestEncryption(t *testing.T) {
 	c := client.Logical()
 
 
-	lib := New(c, "cub")
+	lib := New(c, "my-key")
 
 	secret := "hello world"
 

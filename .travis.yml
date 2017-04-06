@@ -1,0 +1,30 @@
+sudo: false
+language: go
+go:
+  - 1.8
+  - tip
+
+services:
+  - rabbitmq
+
+env:
+  - PATH=/home/travis/gopath/bin:$PATH
+  - VAULT_TOKEN=horde
+  - VAULT_ADDR=http://localhost:8200 
+
+before_install:
+  - go get github.com/golang/lint/golint
+  - go get github.com/mitchellh/gox
+  - wget https://releases.hashicorp.com/vault/0.7.0/vault_0.7.0_linux_amd64.zip
+  - unzip vault_0.7.0_linux_amd64.zip
+  - ./vault server -dev -dev-root-token-id=springboard &
+  - sleep 3
+  - ./vault mount transit
+  - vault write -f transit/keys/my-key
+
+script:
+  - go vet $(go list ./... | grep -v vendor)
+  - go test $(go list ./... | grep -v '/vendor/')
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "springboard{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
+  - gzip springboard_linux_amd64
+
