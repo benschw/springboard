@@ -55,3 +55,24 @@ for complete install instructions_
 	bar                     hello galaxy
 	foo                     hello world
 
+## Complete Usage
+
+	Usage: springboard <subcommand> -s <secrets file> -t <transit key> [args]
+
+	Subcommands:
+	    help                display this help screen and exit
+	    set <key> <value>   set/encrypt 'value' in local secrets file
+	    get <key>           get/decrypt 'value' from local secrets file
+	    push <path>         publish secrets in local secrets file to
+                        'path' in vault generic secrets backend
+
+	Flags:
+	    -s string   secrets file
+	    -t string   transit key
+
+	Examples:
+	    springboard set -s secrets.yml -t my-key user_name supersecret
+	    springboard get -s secrets.yml -t my-key user_name
+	    springboard push -s secrets.yml -t my-key secret/my-space
+
+	github.com/benschw/springboard

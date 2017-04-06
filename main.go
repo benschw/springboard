@@ -7,13 +7,18 @@ import (
 )
 
 func usage() {
-	fmt.Printf("Usage: springboard <subcommand> -s <secrets file> -t <transit key> [values]\n\n")
+	fmt.Printf("Usage: springboard <subcommand> -s <secrets file> -t <transit key> [args]\n\n")
+
+	fmt.Printf("Subcommands:\n")
+	fmt.Printf("    help                display this help screen and exit\n")
+	fmt.Printf("    set <key> <value>   set/encrypt 'value' in local secrets file\n")
+	fmt.Printf("    get <key>           get/decrypt 'value' from local secrets file\n")
+	fmt.Printf("    push <path>         publish secrets in local secrets file to\n")
+	fmt.Printf("                        'path' in vault generic secrets backend\n\n")
 
 	fmt.Printf("Flags:\n")
-	fmt.Printf("    -s string\n")
-	fmt.Printf("        secrets file\n")
-	fmt.Printf("    -t string\n")
-	fmt.Printf("        transit key\n\n")
+	fmt.Printf("    -s string   secrets file\n")
+	fmt.Printf("    -t string   transit key\n\n")
 
 	fmt.Printf("Examples:\n")
 	fmt.Printf("    springboard set -s secrets.yml -t my-key user_name supersecret\n")
@@ -81,6 +86,9 @@ func main() {
 			fmt.Println(err)
 			os.Exit(1)
 		}
+	case "help":
+		f.Usage()
+		os.Exit(0)
 	default:
 		fmt.Printf("%q is not valid command.\n", os.Args[1])
 		f.Usage()
