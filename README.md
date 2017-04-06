@@ -34,7 +34,7 @@ the secrets stored in this file into a specified path of the
 	hello world
 	./springboard push -s ./test.yml -t my-key secret/my-secrets
 
-	vault read secret/my-secrets'
+	vault read secret/my-secrets
 	Key                     Value
 	---                     -----
 	refresh_interval        768h0m0s

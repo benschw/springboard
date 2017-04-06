@@ -1,11 +1,13 @@
 package publisher
 
 import (
-	"github.com/benschw/springboard/secrets"
 	vaultapi "github.com/hashicorp/vault/api"
 )
 
-
+type secretsStore interface {
+	Keys() []string
+	Get(string) (string, error)
+}
 
 func New(vault *vaultapi.Logical, path string) *Publisher {
 	return &Publisher{
@@ -19,7 +21,7 @@ type Publisher struct {
 	path string
 }
 
-func (p *Publisher) Push(secrets *secrets.Secrets) error {
+func (p *Publisher) Push(secrets secretsStore) error {
 
 	dec := make(map[string]interface{})
 
@@ -30,7 +32,6 @@ func (p *Publisher) Push(secrets *secrets.Secrets) error {
 		}
 		dec[key] = val
 	}
-	
 
 	_, err := p.vault.Write(p.path, dec)
 
