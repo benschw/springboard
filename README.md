@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/benschw/springboard.svg?branch=master)](https://travis-ci.org/benschw/springboard)
+[![Downloads](https://img.shields.io/badge/download-release-blue.svg)](http://dl.fligl.io/#/springboard)
+
 # Springboard
 
 `springboard` is a cli utility to help get your secrets into [vault](https://www.vaultproject.io)
