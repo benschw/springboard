@@ -10,12 +10,7 @@ env:
 before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/mitchellh/gox
-  - wget http://dl.fligl.io/vault -O ./vault
-  - chmod 755 vault
-  - ./vault server -dev -dev-root-token-id=springboard &
-  - sleep 3
-  - ./vault mount transit
-  - vault write -f transit/keys/my-key
+  - ./run_vault.sh
 script:
   - go vet $(go list ./... | grep -v vendor)
   - go test $(go list ./... | grep -v '/vendor/')
