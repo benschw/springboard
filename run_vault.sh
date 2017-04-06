@@ -4,8 +4,8 @@
 rm -f vault
 
 wget http://dl.fligl.io/vault -O ~/vault
+chmod 777 ~/vault
 ls -alh ~/
-chmod 755 ~/vault
 ~/vault server -dev -dev-root-token-id=horde &
 sleep 3
 ~/vault mount transit
