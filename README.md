@@ -21,7 +21,7 @@ the secrets stored in this file into a specified path of the
 
 ## Configure Vault
 
-_hard coding tokens etc. is only suitable for dev. See
+_Hard coding tokens etc. is only suitable for dev. See
 [Installing Vault](https://www.vaultproject.io/docs/install/index.html)
 for complete install instructions_
 
