@@ -10,16 +10,38 @@ env:
 before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/mitchellh/gox
-  - wget http://fligl.io/vault
+  - wget http://dl.fligl.io/vault
   - chmod 755 vault
-  - ./vault server -dev -dev-root-token-id=springboard &
+  - "./vault server -dev -dev-root-token-id=springboard &"
   - sleep 3
-  - ./vault mount transit
+  - "./vault mount transit"
   - vault write -f transit/keys/my-key
-
 script:
   - go vet $(go list ./... | grep -v vendor)
   - go test $(go list ./... | grep -v '/vendor/')
   - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "springboard{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
   - gzip springboard_linux_amd64
+  - mkdir dist
+  - mv springboard_linux.gz dist/
 
+deploy:
+  - provider: s3
+    access_key_id: AKIAJWN36CZNBCQXFFTQ
+    secret_access_key:
+      secure: YkjuVVEsvzC/JjcmdN8f7jKQ/yEbxQotslQaFOr4Yq9l23tPaZ8YK8J2PnSti4wcwYlXd0U7qUcby8z5gabaGJOH2UvhuNs8FkLDfrQltYF17kE5N/tmLjjHRsxQpcRsLVoLsyNf6AUKGo8HqVKhpfrlaZPj3qfNUwVIOwcbZya4waX8H14n94t4LLkeGV9CFq+0tmDJz6Uug2yfmw1PNkrl+DLlbJJ7HJfHv295MHHDvfxQSJT4tKt4sbloDNTvTKna2mQyXBHuh2PeJTF9rdvqgOpvC1u3YTkD9c9PRe7ZE8CAEBjNStYkNJE6zLrsN+NN2hnnATuveZgRsdWvzmGzhaye255qDUQEsUl3Artat+sPACNdYtoeBdgvX9/f6EnkDut54gLIy9WVqs2FZTgTC+x/lMhXfaouJWFHGWk59nI+ENd7cxZyS5w5XcSCbPxbX1VunelXsWuXdayiviIVskHWJ1CwQLt8Nwipesb4743uP9WDxGMMRd/6gXUIFE6EcH/5Q+zi3Y5+0Yn7jtT4e/pd/Zob6o4PiWRojgTV1Zvr4skcQ9vQJfZx9sAu8nScwDpVPI5tyUqqOofkeOgIFea+EkGuKpoQMYzoEPMhqTP6KRhawP//fbvOlh0tzTUJQT6CcMLrXUS93+cybAvws03jiWqu0c30HP0WKEs=
+    bucket: dl.fligl.io
+    skip_cleanup: true
+    local-dir: dist
+    upload-dir: artifacts/springboard
+    acl: public_read
+  - provider: s3
+    access_key_id: AKIAJWN36CZNBCQXFFTQ
+    secret_access_key:
+      secure: YkjuVVEsvzC/JjcmdN8f7jKQ/yEbxQotslQaFOr4Yq9l23tPaZ8YK8J2PnSti4wcwYlXd0U7qUcby8z5gabaGJOH2UvhuNs8FkLDfrQltYF17kE5N/tmLjjHRsxQpcRsLVoLsyNf6AUKGo8HqVKhpfrlaZPj3qfNUwVIOwcbZya4waX8H14n94t4LLkeGV9CFq+0tmDJz6Uug2yfmw1PNkrl+DLlbJJ7HJfHv295MHHDvfxQSJT4tKt4sbloDNTvTKna2mQyXBHuh2PeJTF9rdvqgOpvC1u3YTkD9c9PRe7ZE8CAEBjNStYkNJE6zLrsN+NN2hnnATuveZgRsdWvzmGzhaye255qDUQEsUl3Artat+sPACNdYtoeBdgvX9/f6EnkDut54gLIy9WVqs2FZTgTC+x/lMhXfaouJWFHGWk59nI+ENd7cxZyS5w5XcSCbPxbX1VunelXsWuXdayiviIVskHWJ1CwQLt8Nwipesb4743uP9WDxGMMRd/6gXUIFE6EcH/5Q+zi3Y5+0Yn7jtT4e/pd/Zob6o4PiWRojgTV1Zvr4skcQ9vQJfZx9sAu8nScwDpVPI5tyUqqOofkeOgIFea+EkGuKpoQMYzoEPMhqTP6KRhawP//fbvOlh0tzTUJQT6CcMLrXUS93+cybAvws03jiWqu0c30HP0WKEs=
+    bucket: dl.fligl.io
+    skip_cleanup: true
+    local-dir: release
+    upload-dir: artifacts/springboard
+    acl: public_read
+    on:
+      tags: true
