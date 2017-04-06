@@ -4,9 +4,6 @@ go:
   - 1.8
   - tip
 
-services:
-  - rabbitmq
-
 env:
   - PATH=/home/travis/gopath/bin:$PATH VAULT_TOKEN=horde VAULT_ADDR=http://localhost:8200
 
