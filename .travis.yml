@@ -8,9 +8,7 @@ services:
   - rabbitmq
 
 env:
-  - PATH=/home/travis/gopath/bin:$PATH
-  - VAULT_TOKEN=horde
-  - VAULT_ADDR=http://localhost:8200 
+  - PATH=/home/travis/gopath/bin:$PATH VAULT_TOKEN=horde VAULT_ADDR=http://localhost:8200
 
 before_install:
   - go get github.com/golang/lint/golint
