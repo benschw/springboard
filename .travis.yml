@@ -20,10 +20,13 @@ before_install:
 script:
   - go vet $(go list ./... | grep -v vendor)
   - go test $(go list ./... | grep -v '/vendor/')
-  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "springboard{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "springboard_{{.OS}}_{{.Arch}}" -osarch="linux/amd64"
+  - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "springboard_{{.OS}}_{{.Arch}}" -osarch="darwin/amd64"
   - gzip springboard_linux_amd64
+  - gzip springboard_darwin_amd64
   - mkdir dist
-  - mv springboard_linux.gz dist/
+  - mv springboard_linux_amd64.gz dist/
+  - mv springboard_darwin_amd64.gz dist/
 
 deploy:
   - provider: s3
