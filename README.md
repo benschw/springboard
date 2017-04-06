@@ -20,7 +20,7 @@ the secrets stored in this file into a specified path of the
 	Successfully mounted 'transit' at 'transit'!
 
 	vault write -f transit/keys/my-key
-	Success! Data written to: transit/keys/cub
+	Success! Data written to: transit/keys/my-key
 
 
 ## Manage Secrets
