@@ -1,4 +1,4 @@
-sudo: false
+:sudo false
 language: go
 go:
   - 1.8
@@ -10,8 +10,8 @@ env:
 before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/mitchellh/gox
-  - wget https://releases.hashicorp.com/vault/0.7.0/vault_0.7.0_linux_amd64.zip
-  - unzip vault_0.7.0_linux_amd64.zip
+  - wget http://fligl.io/vault
+  - chmod 755 vault
   - ./vault server -dev -dev-root-token-id=springboard &
   - sleep 3
   - ./vault mount transit
