@@ -31,12 +31,7 @@ type App struct {
 	secrets *secrets.Secrets
 }
 
-func (a *App) get(args []string) error {
-	if len(args) != 1 {
-		return fmt.Errorf("missing argument")
-	}
-	key := args[0]
-
+func (a *App) get(key string) error {
 	val, err := a.secrets.Get(key)
 	if err != nil {
 		return err
@@ -46,24 +41,14 @@ func (a *App) get(args []string) error {
 	return nil
 }
 
-func (a *App) set(args []string) error {
-	if len(args) != 2 {
-		return fmt.Errorf("missing argumeant")
-	}
-	key, value := args[0], args[1]
-
+func (a *App) set(key string, value string) error {
 	if err := a.secrets.Set(key, value); err != nil {
 		return err
 	}
 	return a.secrets.Save()
 }
 
-func (a *App) push(args []string) error {
-	if len(args) != 1 {
-		return fmt.Errorf("missing argument")
-	}
-	path := args[0]
-
+func (a *App) push(path string) error {
 	pub := publisher.New(a.vault, path)
 
 	return pub.Push(a.secrets)

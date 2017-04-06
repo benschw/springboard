@@ -38,6 +38,7 @@ func main() {
 	}
 
 	f.Parse(os.Args[2:])
+	args := f.Args()
 
 	if *secretsFile == "" {
 		f.Usage()
@@ -58,17 +59,29 @@ func main() {
 	// subcommands
 	switch os.Args[1] {
 	case "get":
-		if err := app.get(f.Args()); err != nil {
+		if len(args) != 1 {
+			f.Usage()
+			os.Exit(2)
+		}
+		if err := app.get(args[0]); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 	case "set":
-		if err := app.set(f.Args()); err != nil {
+		if len(args) != 2 {
+			f.Usage()
+			os.Exit(2)
+		}
+		if err := app.set(args[0], args[1]); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 	case "push":
-		if err := app.push(f.Args()); err != nil {
+		if len(args) != 2 {
+			f.Usage()
+			os.Exit(2)
+		}
+		if err := app.push(args[0]); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
