@@ -77,7 +77,7 @@ func main() {
 			os.Exit(1)
 		}
 	case "push":
-		if len(args) != 2 {
+		if len(args) != 1 {
 			f.Usage()
 			os.Exit(2)
 		}
