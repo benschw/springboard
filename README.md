@@ -11,7 +11,10 @@ the secrets stored in this file into a specified path of the
 
 ## Vault Setup
 
-	vault server -dev -dev-root-token-id=horde
+	export VAULT_TOKEN=springboard
+	export VAULT_ADDR=http://localhost:8200 
+
+	vault server -dev -dev-root-token-id=springboard
 
 	vault mount transit
 	Successfully mounted 'transit' at 'transit'!
