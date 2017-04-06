@@ -1,10 +1,11 @@
 package secrets
 
 import (
-	"gopkg.in/yaml.v2"
-	"os"
-	"io/ioutil"
 	"errors"
+	"io/ioutil"
+	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type crypt interface {
@@ -32,10 +33,11 @@ func New(path string, crypt crypt) (*Secrets, error) {
 }
 
 type Secrets struct {
-	path string
+	path  string
 	crypt crypt
-	data []SecretsEntry
+	data  []SecretsEntry
 }
+
 func (s *Secrets) Keys() []string {
 	keys := make([]string, len(s.data))
 	for i := 0; i < len(s.data); i++ {
@@ -43,18 +45,19 @@ func (s *Secrets) Keys() []string {
 	}
 	return keys
 }
-func (s *Secrets) Set(key string, value string) {
+func (s *Secrets) Set(key string, value string) error {
+	val, err := s.crypt.Encrypt(value)
+	if err != nil {
+		return err
+	}
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
-			val, err := s.crypt.Encrypt(value)
-			if err != nil {
-				panic(err)
-			}
 			s.data[i].Value = val
-			return
+			return nil
 		}
 	}
-	s.data = append(s.data, SecretsEntry{Key: key, Value: value})
+	s.data = append(s.data, SecretsEntry{Key: key, Value: val})
+	return nil
 }
 func (s *Secrets) Get(key string) (string, error) {
 	for i := 0; i < len(s.data); i++ {
@@ -73,7 +76,6 @@ func (s *Secrets) Save() error {
 }
 
 type SecretsEntry struct {
-	Key string
+	Key   string
 	Value string
 }
-

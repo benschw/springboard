@@ -1,19 +1,19 @@
 package secrets
 
-
 import (
-	"testing"
 	"io/ioutil"
 	"os"
+	"testing"
 )
-type stubCrypt struct {}
+
+type stubCrypt struct{}
+
 func (s stubCrypt) Encrypt(val string) (string, error) {
 	return val, nil
 }
 func (s stubCrypt) Decrypt(val string) (string, error) {
 	return val, nil
 }
-
 
 func TestSecretAccess(t *testing.T) {
 	file, _ := ioutil.TempFile(os.TempDir(), "vault")
@@ -24,9 +24,9 @@ func TestSecretAccess(t *testing.T) {
 	if err != nil {
 		t.Error("problem loading config: ", err)
 	}
-	
+
 	s.Set("foo", "bar")
-	
+
 	val, err := s.Get("foo")
 	if err != nil {
 		t.Error("problem retreiving key: ", err)
@@ -52,7 +52,6 @@ func TestSecretStorage(t *testing.T) {
 
 	s2, _ := New(file.Name(), &stubCrypt{})
 
-
 	val, _ := s2.Get("foo")
 
 	if val != "bar" {
@@ -67,7 +66,6 @@ func TestKeys(t *testing.T) {
 
 	s.Set("foo", "bar")
 	s.Set("baz", "boo")
-
 
 	val := s.Keys()
 
@@ -84,7 +82,7 @@ func TestNoFile(t *testing.T) {
 		t.Error("config doesn't exist, should have created it", err)
 	}
 	defer os.Remove("./dne")
-	
+
 	s.Set("foo", "bar")
 	s.Save()
 
