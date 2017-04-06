@@ -25,7 +25,6 @@ func usage() {
 
 func main() {
 	// flags
-
 	f := flag.NewFlagSet("", flag.ExitOnError)
 	f.Usage = usage
 
@@ -38,16 +37,13 @@ func main() {
 	}
 
 	f.Parse(os.Args[2:])
-	args := f.Args()
 
-	if *secretsFile == "" {
+	if *secretsFile == "" || *transitKey == "" {
 		f.Usage()
 		os.Exit(2)
 	}
-	if *transitKey == "" {
-		f.Usage()
-		os.Exit(2)
-	}
+
+	args := f.Args()
 
 	// App
 	app, err := NewApp(*secretsFile, *transitKey)
