@@ -10,6 +10,11 @@ store your secrets locally in a yaml formatted secrets file and facilitates push
 the secrets stored in this file into a specified path of the
 [generic](https://www.vaultproject.io/docs/secrets/generic/index.html) secret backend.
 
+Since the values in your secrets file are encrypted with vault's transit backend, 
+you can commit these files to source control. This allows you to be more deliberate about
+tracking the sensitive data needed to run your applications.
+
+
 # Usage
 
 ## Install
