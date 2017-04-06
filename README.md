@@ -12,7 +12,18 @@ the secrets stored in this file into a specified path of the
 
 # Usage
 
-## Vault Setup
+## Install
+
+	wget http://dl.fligl.io/artifacts/springboard/springboard_linux_amd64.gz
+	gunzip springboard_linux_amd64.gz
+	chmod +x springboard_linux_amd64
+	mv springboard_linux_amd64 /usr/local/bin/
+
+## Configure Vault
+
+_hard coding tokens etc. is only suitable for dev. See
+[Installing Vault](https://www.vaultproject.io/docs/install/index.html)
+for complete install instructions_
 
 	export VAULT_TOKEN=springboard
 	export VAULT_ADDR=http://localhost:8200 
@@ -26,16 +37,16 @@ the secrets stored in this file into a specified path of the
 	Success! Data written to: transit/keys/my-key
 
 
-## Manage Secrets
+## Managing Secrets with Springboard
 
 	export VAULT_TOKEN=springboard
 	export VAULT_ADDR=http://localhost:8200 
 
-	./springboard set -s ./test.yml -t my-key foo "hello world"
-	./springboard set -s ./test.yml -t my-key bar "hello galaxy"
-	./springboard get -s ./test.yml -t my-key foo
+	springboard set -s ./test.yml -t my-key foo "hello world"
+	springboard set -s ./test.yml -t my-key bar "hello galaxy"
+	springboard get -s ./test.yml -t my-key foo
 	hello world
-	./springboard push -s ./test.yml -t my-key secret/my-secrets
+	springboard push -s ./test.yml -t my-key secret/my-secrets
 
 	vault read secret/my-secrets
 	Key                     Value
