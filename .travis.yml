@@ -24,9 +24,11 @@ script:
   - gox -ldflags "-X main.Version=$TRAVIS_BUILD_NUMBER" -output "springboard_{{.OS}}_{{.Arch}}" -osarch="darwin/amd64"
   - gzip springboard_linux_amd64
   - gzip springboard_darwin_amd64
-  - mkdir dist
-  - mv springboard_linux_amd64.gz dist/
-  - mv springboard_darwin_amd64.gz dist/
+  - mkdir dist release
+  - cp springboard_linux_amd64.gz dist/
+  - cp springboard_darwin_amd64.gz dist/
+  - cp springboard_linux_amd64.gz release/springboard_linux_amd64_$(git describe --tags).gz
+  - cp springboard_darwin_amd64.gz release/springboard_darwin_amd64_$(git describe --tags).gz
 
 deploy:
   - provider: s3
