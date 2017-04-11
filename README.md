@@ -6,7 +6,7 @@
 `springboard` is a cli utility to help get your secrets into [vault](https://www.vaultproject.io)
 
 It leverages the [transit](https://www.vaultproject.io/docs/secrets/transit/index.html) secret backend to 
-store your secrets locally in a yaml formatted secrets file and facilitates pushing
+protect your secrets locally in a yaml formatted secrets file and facilitates pushing
 the secrets stored in this file into a specified path of the
 [generic](https://www.vaultproject.io/docs/secrets/generic/index.html) secret backend.
 
