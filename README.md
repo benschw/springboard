@@ -22,7 +22,7 @@ tracking and publishing the sensitive data needed to run your applications.
 	wget http://dl.fligl.io/artifacts/springboard/springboard_linux_amd64.gz
 	gunzip springboard_linux_amd64.gz
 	chmod +x springboard_linux_amd64
-	mv springboard_linux_amd64 /usr/local/bin/
+	mv springboard_linux_amd64 /usr/local/bin/springboard
 
 ## Configure Vault
 
