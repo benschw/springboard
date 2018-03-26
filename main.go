@@ -13,6 +13,7 @@ func usage() {
 	fmt.Printf("    help                display this help screen and exit\n")
 	fmt.Printf("    set <key> <value>   set/encrypt 'value' in local secrets file\n")
 	fmt.Printf("    get <key>           get/decrypt 'value' from local secrets file\n")
+	fmt.Printf("    remove <key>        remove 'key' (and its value) from local secrets file\n")
 	fmt.Printf("    push <path>         publish secrets in local secrets file to\n")
 	fmt.Printf("                        'path' in vault generic secrets backend\n\n")
 
@@ -23,6 +24,7 @@ func usage() {
 	fmt.Printf("Examples:\n")
 	fmt.Printf("    springboard set -s secrets.yml -t my-key user_name supersecret\n")
 	fmt.Printf("    springboard get -s secrets.yml -t my-key user_name\n")
+	fmt.Printf("    springboard remove -s secrets.yml -t my-key user_name\n")
 	fmt.Printf("    springboard push -s secrets.yml -t my-key secret/my-space\n\n")
 
 	fmt.Printf("github.com/benschw/springboard\n")
@@ -74,6 +76,15 @@ func main() {
 			os.Exit(2)
 		}
 		if err := app.set(args[0], args[1]); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	case "remove":
+		if len(args) != 1 {
+			f.Usage()
+			os.Exit(2)
+		}
+		if err := app.remove(args[0]); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

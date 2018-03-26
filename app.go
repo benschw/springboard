@@ -48,6 +48,13 @@ func (a *App) set(key string, value string) error {
 	return a.secrets.Save()
 }
 
+func (a *App) remove(key string) error {
+	if err := a.secrets.Remove(key); err != nil {
+		return err
+	}
+	return a.secrets.Save()
+}
+
 func (a *App) push(path string) error {
 	pub := publisher.New(a.vault, path)
 

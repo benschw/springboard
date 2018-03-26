@@ -58,6 +58,32 @@ func TestSecretStorage(t *testing.T) {
 		t.Error("should equal bar", val)
 	}
 }
+
+func TestSecretRemove(t *testing.T) {
+	file, _ := ioutil.TempFile(os.TempDir(), "vault")
+	defer os.Remove(file.Name())
+
+	s, _ := New(file.Name(), &stubCrypt{})
+
+	s.Set("foo", "bar")
+	if err := s.Save(); err != nil {
+		t.Error("problem saving", err)
+	}
+
+	s.Remove("foo")
+	if err := s.Save(); err != nil {
+		t.Error("problem saving", err)
+	}
+
+	s2, _ := New(file.Name(), &stubCrypt{})
+
+	val, err := s2.Get("foo")
+
+	if err == nil {
+		t.Error("should have been removed", val)
+	}
+}
+
 func TestKeys(t *testing.T) {
 	file, _ := ioutil.TempFile(os.TempDir(), "vault")
 	defer os.Remove(file.Name())
