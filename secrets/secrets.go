@@ -45,6 +45,7 @@ func (s *Secrets) Keys() []string {
 	}
 	return keys
 }
+
 func (s *Secrets) Set(key string, value string) error {
 	val, err := s.crypt.Encrypt(value)
 	if err != nil {
@@ -59,6 +60,18 @@ func (s *Secrets) Set(key string, value string) error {
 	s.data = append(s.data, SecretsEntry{Key: key, Value: val})
 	return nil
 }
+
+func (s *Secrets) Remove(key string) error {
+	for i := 0; i < len(s.data); i++ {
+		if s.data[i].Key == key {
+			//remove the element
+			s.data = append(s.data[:i], s.data[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("key not found")
+}
+
 func (s *Secrets) Get(key string) (string, error) {
 	for i := 0; i < len(s.data); i++ {
 		if s.data[i].Key == key {
